@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "current_session": null,
+  "circuit_breakers": {
+    "tool_calls": {
+      "current": 0,
+      "warning": 40,
+      "limit": 50
+    },
+    "errors": {
+      "current": 0,
+      "warning": 4,
+      "limit": 5,
+      "history": []
+    },
+    "same_file_edits": {
+      "files": {},
+      "warning": 8,
+      "limit": 10
+    },
+    "stuck_loop": {
+      "patterns": [],
+      "threshold": 3
+    }
+  },
+  "mode": "default",
+  "session_history": []
+}
