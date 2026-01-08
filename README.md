@@ -19,10 +19,10 @@ APEX combines four complementary systems into one cohesive Claude Code enhanceme
 
 ```bash
 # Install
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/apex-mode/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sorcerai/apex-mode/main/install.sh | bash
 
 # Or clone manually
-git clone https://github.com/YOUR_USERNAME/apex-mode.git
+git clone https://github.com/sorcerai/apex-mode.git
 cd apex-mode && ./install.sh
 ```
 
@@ -95,7 +95,7 @@ DISCOVER → PLAN → TASK → EXECUTE → REVIEW → COMMIT
 ### Automatic (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/apex-mode/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sorcerai/apex-mode/main/install.sh | bash
 ```
 
 This will:
@@ -107,7 +107,7 @@ This will:
 
 ```bash
 # Clone
-git clone https://github.com/YOUR_USERNAME/apex-mode.git
+git clone https://github.com/sorcerai/apex-mode.git
 
 # Copy to Claude config
 cp -r apex-mode/* ~/.claude/apex/
