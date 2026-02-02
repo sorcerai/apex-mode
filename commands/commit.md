@@ -258,3 +258,97 @@ Manual alternative:
 2. Create PR manually
 3. Use body from deliverable.md
 ```
+
+---
+
+## Pre-Commit Quality Gate
+
+**MANDATORY CHECK**: Before committing, verify review status.
+
+### Gate Logic
+
+```
+IF review_status != "PASS":
+  → ABORT commit
+  → Display: "❌ Cannot commit: Review status is {status}"
+  → List outstanding issues
+  → Options:
+    1. "/apex/review" - Re-run review
+    2. "--force" - Override gate (logged)
+    3. "abort" - Cancel commit
+
+IF review_status == "PASS":
+  → Proceed with commit
+```
+
+### Implementation
+
+Before executing `git commit`:
+
+```bash
+# Check review status from state
+REVIEW_STATUS=$(jq -r '.review.status // "unknown"' "$APEX_STATE")
+
+if [[ "$REVIEW_STATUS" != "PASS" ]]; then
+    echo "❌ QUALITY GATE FAILED" >&2
+    echo "   Review status: $REVIEW_STATUS" >&2
+    echo "   Run '/apex/review' first, or use --force to override." >&2
+    
+    # Show outstanding issues
+    jq -r '.review.issues[]?' "$APEX_STATE" >&2
+    
+    if [[ "$1" != "--force" ]]; then
+        exit 1
+    fi
+    
+    echo "⚠️  Force override used. Logging for audit." >&2
+    # Log the override
+    jq --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+       '.audit.force_commits += [{"timestamp": $ts, "review_status": .review.status}]' \
+       "$APEX_STATE" > "$APEX_STATE.tmp" && mv "$APEX_STATE.tmp" "$APEX_STATE"
+fi
+```
+
+### Audit Trail
+
+Force overrides are logged in `apex-state.json`:
+
+```json
+{
+  "audit": {
+    "force_commits": [
+      {"timestamp": "2026-02-01T20:00:00Z", "review_status": "WARN"}
+    ]
+  }
+}
+```
+
+---
+
+## Pre-Commit Quality Gate
+
+Before committing, APEX validates that the review phase passed:
+
+```
+IF review_status != "PASS":
+  🚫 COMMIT BLOCKED
+  
+  Review found issues that must be addressed:
+  - [Issue list from review phase]
+  
+  Options:
+  1. Fix issues and re-run /apex/review
+  2. Use --force to commit anyway (not recommended)
+  3. Abort with /apex/abort
+
+ELSE:
+  ✅ Quality gate passed - proceeding with commit
+```
+
+### Force Commit (Override)
+
+```
+/apex/commit --force
+```
+
+⚠️ **Use with caution.** Bypasses quality gate. Creates commit with `[FORCE]` prefix in message.

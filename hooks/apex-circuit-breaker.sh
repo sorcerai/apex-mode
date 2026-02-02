@@ -5,7 +5,7 @@
 set -e
 
 APEX_STATE="$HOME/.claude/apex/state/apex-state.json"
-APEX_DIR="$HOME/.claude/apex"
+APEX_LOCK="$APEX_STATE.lock"
 
 # Ensure state file exists
 if [[ ! -f "$APEX_STATE" ]]; then
@@ -16,6 +16,10 @@ fi
 HOOK_INPUT=$(cat)
 TOOL_NAME=$(echo "$HOOK_INPUT" | jq -r '.tool_name // empty')
 TOOL_INPUT=$(echo "$HOOK_INPUT" | jq -r '.tool_input // empty')
+
+# Atomic read with flock
+(
+flock -s 200
 
 # Read current state
 STATE=$(cat "$APEX_STATE")
@@ -86,20 +90,32 @@ if [[ "$TOOL_NAME" == "Edit" || "$TOOL_NAME" == "Write" || "$TOOL_NAME" == "Mult
     fi
 fi
 
-# Check stuck loop pattern
-PATTERN_COUNT=$(echo "$STATE" | jq -r '.circuit_breakers.stuck_loop.patterns | length')
-if [[ "$PATTERN_COUNT" -ge "$STUCK_THRESHOLD" ]]; then
-    # Check if last N patterns are identical
-    LAST_PATTERNS=$(echo "$STATE" | jq -r ".circuit_breakers.stuck_loop.patterns[-$STUCK_THRESHOLD:]")
-    UNIQUE_PATTERNS=$(echo "$LAST_PATTERNS" | jq -r 'unique | length')
-
-    if [[ "$UNIQUE_PATTERNS" -eq 1 ]]; then
+# Improved stuck loop detection using hash-based approach
+PATTERN_HASHES=$(echo "$STATE" | jq -r '[.circuit_breakers.stuck_loop.patterns[-'$STUCK_THRESHOLD':][]] | map(@base64) | .[]' 2>/dev/null || echo "")
+if [[ -n "$PATTERN_HASHES" ]]; then
+    UNIQUE_COUNT=$(echo "$PATTERN_HASHES" | sort -u | wc -l | tr -d ' ')
+    TOTAL_COUNT=$(echo "$PATTERN_HASHES" | wc -l | tr -d ' ')
+    
+    if [[ "$TOTAL_COUNT" -ge "$STUCK_THRESHOLD" && "$UNIQUE_COUNT" -eq 1 ]]; then
         echo "🚨 APEX STUCK LOOP DETECTED: Same action pattern repeated $STUCK_THRESHOLD times" >&2
-        echo "   Pattern: $(echo "$LAST_PATTERNS" | jq -r '.[0]')" >&2
         echo "   Try a different approach." >&2
         exit 1
     fi
+    
+    # Also detect longer cycles (A→B→A→B)
+    if [[ "$TOTAL_COUNT" -ge 4 ]]; then
+        HALF=$((TOTAL_COUNT / 2))
+        FIRST_HALF=$(echo "$PATTERN_HASHES" | head -n $HALF | md5sum | cut -d' ' -f1)
+        SECOND_HALF=$(echo "$PATTERN_HASHES" | tail -n $HALF | md5sum | cut -d' ' -f1)
+        if [[ "$FIRST_HALF" == "$SECOND_HALF" ]]; then
+            echo "🚨 APEX CYCLE DETECTED: Repeating pattern of length $HALF detected" >&2
+            echo "   Try a different approach." >&2
+            exit 1
+        fi
+    fi
 fi
+
+) 200>"$APEX_LOCK"
 
 # All checks passed
 exit 0
