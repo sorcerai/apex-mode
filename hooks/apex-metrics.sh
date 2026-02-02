@@ -5,6 +5,7 @@
 set -e
 
 APEX_STATE="$HOME/.claude/apex/state/apex-state.json"
+APEX_LOCK="$APEX_STATE.lock"
 
 # Ensure state file exists
 if [[ ! -f "$APEX_STATE" ]]; then
@@ -18,11 +19,28 @@ TOOL_INPUT=$(echo "$HOOK_INPUT" | jq -r '.tool_input // empty')
 TOOL_OUTPUT=$(echo "$HOOK_INPUT" | jq -r '.tool_output // empty')
 TOOL_ERROR=$(echo "$HOOK_INPUT" | jq -r '.error // empty')
 
+# Extract token usage if present
+INPUT_TOKENS=$(echo "$HOOK_INPUT" | jq -r '.usage.input_tokens // 0')
+OUTPUT_TOKENS=$(echo "$HOOK_INPUT" | jq -r '.usage.output_tokens // 0')
+
+# Atomic update with flock
+(
+flock -x 200
+
 # Read current state
 STATE=$(cat "$APEX_STATE")
 
 # Increment tool calls
 STATE=$(echo "$STATE" | jq '.circuit_breakers.tool_calls.current += 1')
+
+# Track token usage
+if [[ "$INPUT_TOKENS" -gt 0 || "$OUTPUT_TOKENS" -gt 0 ]]; then
+    STATE=$(echo "$STATE" | jq --argjson inp "$INPUT_TOKENS" --argjson out "$OUTPUT_TOKENS" '
+        .metrics.tokens.input += $inp |
+        .metrics.tokens.output += $out |
+        .metrics.tokens.total = (.metrics.tokens.input + .metrics.tokens.output)
+    ')
+fi
 
 # Track errors
 if [[ -n "$TOOL_ERROR" && "$TOOL_ERROR" != "null" ]]; then
@@ -56,7 +74,9 @@ STATE=$(echo "$STATE" | jq --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
     .current_session.last_activity = $ts
 ')
 
-# Write updated state
-echo "$STATE" | jq '.' > "$APEX_STATE"
+# Write updated state atomically
+echo "$STATE" | jq '.' > "$APEX_STATE.tmp" && mv "$APEX_STATE.tmp" "$APEX_STATE"
+
+) 200>"$APEX_LOCK"
 
 exit 0

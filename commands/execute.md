@@ -212,3 +212,24 @@ Report current execution state without changing anything
 
 ### /apex/reset
 Reset circuit breakers (use with caution, requires confirmation)
+
+---
+
+## Rollback Checkpoints
+
+Before major execution phases, APEX creates a git stash checkpoint:
+
+```bash
+# Automatic checkpoint before execute
+git stash push -m "apex-checkpoint-$(date +%Y%m%d-%H%M%S)"
+```
+
+### Rollback Commands
+
+```
+/apex/rollback           # Restore last checkpoint
+/apex/rollback --list    # Show available checkpoints
+/apex/rollback --drop    # Remove checkpoint after successful commit
+```
+
+Checkpoints are auto-cleaned after successful `/apex/commit`.
