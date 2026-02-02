@@ -610,3 +610,155 @@ APEX works alongside MCP servers:
 - Planning with Files persistence
 - AIDD lifecycle commands
 - Ralph safety mechanisms
+
+---
+
+## Knowledge Graph (v2)
+
+APEX v2 introduces a persistent knowledge graph for context engineering.
+
+### Purpose
+
+The knowledge graph stores:
+- **Concepts**: Project components, directories, features
+- **Memories**: Patterns, pitfalls, decisions, learnings
+- **Files**: Important project files and their roles
+- **Relationships**: Connections between concepts
+
+### Location
+
+`~/.claude/apex/state/knowledge-graph.json`
+
+### Commands
+
+```bash
+# Initialize graph for current project
+python functions/graph_manager.py init --project .
+
+# Query knowledge
+python functions/graph_manager.py query "auth"
+
+# Add a memory
+python functions/graph_manager.py memory \
+  --type pitfall \
+  --summary "Never edit package.json and code in same commit" \
+  --concepts "npm,commits" \
+  --confidence 0.9
+
+# Add relationship
+python functions/graph_manager.py relate \
+  --from auth \
+  --to users \
+  --type depends_on
+
+# View stats
+python functions/graph_manager.py stats
+```
+
+### Memory Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| `pattern` | Successful approaches | "Use factory functions for test data" |
+| `pitfall` | Things to avoid | "Auth changes break session tests" |
+| `decision` | Architectural choices | "Chose JWT over sessions for scaling" |
+| `learning` | General insights | "TypeScript generics improve DX" |
+
+### Context Loading
+
+On YOLO/swarm start, APEX can query relevant knowledge:
+
+```
+1. Parse task description for concepts
+2. Query knowledge graph for each concept
+3. Load relevant memories (patterns, pitfalls)
+4. Include in execution context
+```
+
+This enables cross-session learning without bloating the prompt.
+
+### Graph Schema
+
+```json
+{
+  "version": "1.0.0",
+  "project": "/path/to/project",
+  "concepts": {
+    "auth": {
+      "type": "feature",
+      "path": "src/auth",
+      "memories": ["mem_001", "mem_002"],
+      "related_files": ["src/auth/index.ts"]
+    }
+  },
+  "memories": [
+    {
+      "id": "mem_001",
+      "type": "pitfall",
+      "summary": "Auth changes break session tests",
+      "concepts": ["auth", "testing"],
+      "confidence": 0.9,
+      "created_at": "2024-01-15T..."
+    }
+  ],
+  "relationships": [
+    {
+      "from": "auth",
+      "to": "users",
+      "type": "depends_on"
+    }
+  ]
+}
+```
+
+---
+
+## Improved Stagnation Detection (v2)
+
+APEX v2 replaces simple repetition detection with hash-based pattern matching.
+
+### Detection Types
+
+| Pattern | Description | Example |
+|---------|-------------|---------|
+| Immediate | Same state N times | A→A→A |
+| Cycle | Repeating sequence | A→B→A→B |
+| Oscillation | Alternating states | A→B→A→B→A |
+
+### State Hash
+
+Each state is hashed from:
+- Current phase (DISCOVER, PLAN, EXECUTE, etc.)
+- Completion indicators (code_changed, tests_passing, etc.)
+- Recent files modified (last 5)
+- Recent actions (last 3)
+
+### Usage
+
+```bash
+# Check history for patterns
+python functions/stagnation_detector.py check \
+  --history '["hash1", "hash2", "hash1", "hash2"]' \
+  --threshold 3 \
+  --max-cycle 5
+
+# Update history and check
+python functions/stagnation_detector.py update \
+  --state '{"phase": "EXECUTE", "indicators": {"code_changed": true}}' \
+  --history-file /tmp/apex-history.json
+```
+
+### Integration
+
+Circuit breakers now use stagnation detection:
+
+```bash
+# In apex-circuit-breaker.sh
+STAGNATION=$(python functions/stagnation_detector.py check ...)
+if [[ $(echo "$STAGNATION" | jq -r '.stagnant') == "true" ]]; then
+  echo "🚨 STAGNATION DETECTED"
+  echo "Pattern: $(echo "$STAGNATION" | jq -r '.pattern_type')"
+  echo "Suggestion: $(echo "$STAGNATION" | jq -r '.suggestion')"
+  exit 1
+fi
+```
