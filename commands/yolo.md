@@ -206,3 +206,124 @@ The circuit breakers exist because autonomous agents can:
 YOLO mode trusts the breakers to catch these issues. When they trip, a human decides whether to continue or course-correct.
 
 This is Ralph's philosophy: **"Autonomy with guardrails."**
+
+---
+
+## Loop Mode & EXIT_SIGNAL (v2)
+
+YOLO mode now includes Navigator-style structured completion with dual-condition exit.
+
+### APEX_STATUS Block
+
+After each major phase, YOLO displays structured status:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+APEX_STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Phase: EXECUTE
+Iteration: 3/5
+Progress: 60%
+
+Completion Indicators:
+  [x] Code changes made
+  [x] Tests passing
+  [ ] Code reviewed
+  [ ] Documentation updated
+
+Exit Conditions:
+  Heuristics: 2/4 (need 2+)
+  EXIT_SIGNAL: false
+
+State Hash: abc123def456
+Stagnation: 0/3
+
+Next Action: Continue implementation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### EXIT_SIGNAL
+
+YOLO uses a **dual-condition exit gate** (from Navigator):
+
+1. **Heuristics**: At least 2 completion indicators must be met
+2. **EXIT_SIGNAL**: Explicit declaration that task is complete
+
+```
+# Set EXIT_SIGNAL when done:
+EXIT_SIGNAL: true
+
+# Exit decision logic:
+IF heuristics >= 2 AND EXIT_SIGNAL == true:
+  → EXIT: Task complete
+ELIF heuristics >= 2 AND EXIT_SIGNAL == false:
+  → CONTINUE: Awaiting explicit completion
+ELIF EXIT_SIGNAL == true AND heuristics < 2:
+  → BLOCKED: Cannot exit with insufficient indicators
+ELSE:
+  → CONTINUE: More work needed
+```
+
+This prevents premature exits when metrics are met but work remains.
+
+### Completion Indicators
+
+| Indicator | How It's Detected |
+|-----------|-------------------|
+| `code_changed` | Git shows modified files |
+| `tests_passing` | Test command exits with code 0 |
+| `code_reviewed` | Review phase completed without P0/P1 issues |
+| `docs_updated` | .md files in diff |
+| `committed` | Git commit created |
+
+### Stagnation Detection (Improved)
+
+YOLO now uses hash-based stagnation detection via `functions/stagnation_detector.py`:
+
+- **Immediate repetition**: A→A→A (same state 3+ times)
+- **Short cycles**: A→B→A→B (repeating pattern)
+- **Oscillation**: A→B→A→B→A (stuck between two states)
+
+```bash
+# Check for stagnation
+python functions/stagnation_detector.py check \
+  --history '["abc123", "def456", "abc123", "def456"]' \
+  --threshold 3
+
+# Output:
+{
+  "stagnant": true,
+  "pattern_type": "cycle_2",
+  "pattern": ["abc123", "def456"],
+  "suggestion": "Detected repeating cycle of length 2. Break the loop."
+}
+```
+
+### Loop Mode Flag
+
+```
+/apex/yolo --loop Build feature X
+
+# Enables:
+# - Structured APEX_STATUS after each phase
+# - EXIT_SIGNAL requirement for completion
+# - Enhanced stagnation detection
+# - Max iterations limit (default: 5)
+```
+
+### Knowledge Graph Integration
+
+YOLO can leverage the knowledge graph for context:
+
+```bash
+# Query relevant knowledge before starting
+python functions/graph_manager.py query "auth"
+
+# Add learnings after completion
+python functions/graph_manager.py memory \
+  --type pitfall \
+  --summary "Auth middleware must be added before route handlers" \
+  --concepts "auth,middleware,routing"
+```
+
+Knowledge persists across sessions, helping future YOLO runs.
