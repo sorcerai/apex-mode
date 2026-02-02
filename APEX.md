@@ -8,8 +8,11 @@
 ## Quick Start
 
 ```
-/apex/yolo [task]  → Full autonomous run (Ralph-style)
-                     Circuit breakers are your only guardrails
+/apex/yolo [task]   → Full autonomous run (Ralph-style)
+                      Circuit breakers are your only guardrails
+
+/apex/swarm [task]  → Parallel execution with worker swarm
+                      Decompose → Spawn workers → Monitor → Merge
 
 # Or step-by-step:
 /apex/discover  → Understand requirements and context
@@ -18,6 +21,15 @@
 /apex/execute   → Execute with safety guardrails
 /apex/review    → Validate implementation quality
 /apex/commit    → Complete git workflow
+```
+
+### Swarm Commands (v2)
+```
+/apex/swarm [task]         → Parallel autonomous execution
+/apex/swarm --workers=N    → Specify worker count (default: 3)
+/apex/swarm --dry-run      → Show decomposition without executing
+/apex/swarm continue       → Resume interrupted swarm
+/apex/swarm status         → Show swarm progress
 ```
 
 ---

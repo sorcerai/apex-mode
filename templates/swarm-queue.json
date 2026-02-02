@@ -1,0 +1,25 @@
+{
+  "swarm_id": null,
+  "status": "idle",
+  "created_at": null,
+  "config": {
+    "max_workers": 5,
+    "default_workers": 3,
+    "merge_strategy": "sequential",
+    "cleanup_on_complete": true
+  },
+  "workers": {},
+  "queue": [],
+  "completed": [],
+  "conflicts": [],
+  "metrics": {
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0
+    },
+    "tool_calls": 0,
+    "estimated_cost_usd": 0.0,
+    "duration_ms": 0
+  }
+}
