@@ -1,0 +1,54 @@
+# [PROJECT_NAME]
+
+[PROJECT_DESCRIPTION]
+
+## Features
+
+<!-- Auto-generated from code analysis -->
+- [FEATURE_1]
+- [FEATURE_2]
+- [FEATURE_3]
+
+## Installation
+
+```bash
+[INSTALL_COMMANDS]
+```
+
+## Quick Start
+
+```bash
+[QUICKSTART_COMMANDS]
+```
+
+## Configuration
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| [OPTION] | [DESCRIPTION] | [DEFAULT] |
+
+## API Overview
+
+<!-- Auto-generated from exports -->
+[API_SUMMARY]
+
+## Development
+
+```bash
+# Install dependencies
+[DEV_INSTALL]
+
+# Run tests
+[TEST_COMMAND]
+
+# Build
+[BUILD_COMMAND]
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[LICENSE_TYPE]

@@ -1,0 +1,74 @@
+# Contributing to [PROJECT_NAME]
+
+## Development Setup
+
+```bash
+# Clone the repository
+git clone [REPO_URL]
+cd [PROJECT_NAME]
+
+# Install dependencies
+[INSTALL_COMMANDS]
+
+# Verify setup
+[VERIFY_COMMAND]
+```
+
+## Code Style
+
+[CODE_STYLE_GUIDELINES]
+
+### Linting
+
+```bash
+[LINT_COMMAND]
+```
+
+### Formatting
+
+```bash
+[FORMAT_COMMAND]
+```
+
+## Testing
+
+```bash
+# Run all tests
+[TEST_COMMAND]
+
+# Run specific test
+[TEST_SPECIFIC_COMMAND]
+
+# Run with coverage
+[TEST_COVERAGE_COMMAND]
+```
+
+## Pull Request Process
+
+1. Create a feature branch from `main`
+2. Make your changes with clear commit messages
+3. Ensure all tests pass
+4. Update documentation if needed
+5. Submit a PR with a clear description
+
+### Commit Message Format
+
+```
+type(scope): subject
+
+[body]
+
+[footer]
+```
+
+**Types**: feat, fix, docs, style, refactor, test, chore
+
+## Issue Reporting
+
+- Use the issue templates when available
+- Include reproduction steps for bugs
+- Provide environment details (OS, version, etc.)
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the project's license.

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "graph-code": {
+      "command": "python",
+      "args": ["-m", "code_graph_rag.mcp_server"],
+      "cwd": "~/.claude/apex/integrations/graph-code/src",
+      "env": {
+        "MEMGRAPH_HOST": "localhost",
+        "MEMGRAPH_PORT": "7687",
+        "MEMGRAPH_USER": "",
+        "MEMGRAPH_PASSWORD": "",
+        "GRAPH_CODE_CACHE": "~/.cache/graph-code"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "grepai": {
+      "command": "grepai",
+      "args": ["mcp-serve"],
+      "env": {
+        "OLLAMA_HOST": "http://localhost:11434",
+        "OLLAMA_MODEL": "nomic-embed-text",
+        "GREPAI_CACHE_DIR": "~/.cache/grepai",
+        "GREPAI_INDEX_PATH": ".grepai-index"
+      }
+    }
+  }
+}

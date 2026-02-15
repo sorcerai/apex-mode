@@ -1,28 +1,130 @@
 {
-  "version": "1.0.0",
+  "version": "4.0.0",
   "current_session": null,
+  
   "circuit_breakers": {
+    "tripped": false,
     "tool_calls": {
-      "current": 0,
-      "warning": 40,
-      "limit": 50
+      "iteration_current": 0,
+      "cycle_current": 0,
+      "iteration_warning": 40,
+      "iteration_limit": 50,
+      "cycle_limit": 200
     },
     "errors": {
-      "current": 0,
-      "warning": 4,
-      "limit": 5,
+      "iteration_current": 0,
+      "cycle_current": 0,
+      "iteration_warning": 4,
+      "iteration_limit": 5,
+      "cycle_limit": 15,
       "history": []
     },
     "same_file_edits": {
       "files": {},
-      "warning": 8,
-      "limit": 10
+      "iteration_warning": 8,
+      "iteration_limit": 10,
+      "cycle_limit": 30
     },
     "stuck_loop": {
       "patterns": [],
+      "threshold": 3,
+      "state_hashes": [],
+      "stagnation_count": 0
+    }
+  },
+
+  "completion_cycle": {
+    "active": false,
+    "iteration_count": 0,
+    "max_iterations": null,
+    "promise": null,
+    "prompt_file": null,
+    "started": null,
+    "phase": "INIT",
+    "exit_signal": false,
+    "completion_indicators": {
+      "code_committed": false,
+      "tests_passing": false,
+      "docs_updated": false,
+      "user_confirmed": false
+    }
+  },
+
+  "context_budget": {
+    "total": 200000,
+    "used": 0,
+    "warning_threshold": 0.70,
+    "critical_threshold": 0.85,
+    "breakdown": {
+      "system": 0,
+      "apex_core": 0,
+      "active_context": 0,
+      "working_memory": 0
+    },
+    "files_loaded": [],
+    "last_check": null
+  },
+
+  "context_efficiency": {
+    "session_start_tokens": 0,
+    "peak_tokens": 0,
+    "files_loaded": 0,
+    "files_summarized": 0,
+    "searches_performed": 0,
+    "searches_fully_loaded": 0,
+    "efficiency_score": 100
+  },
+
+  "semantic_tools": {
+    "available": {
+      "grepai": false,
+      "graph_code": false
+    },
+    "usage": {},
+    "last_used": null
+  },
+
+  "theory_of_mind": {
+    "profile_path": "~/.claude/apex/state/apex-profile.json",
+    "satisfaction_score": 0.85,
+    "recent_corrections": 0,
+    "drift_detected": false,
+    "last_checkpoint": null
+  },
+
+  "loop_mode": {
+    "status": {
+      "phase": "INIT",
+      "iteration": 0,
+      "max_iterations": 10,
+      "progress_percent": 0
+    },
+    "completion_indicators": {
+      "code_complete": false,
+      "tests_passing": false,
+      "lint_clean": false,
+      "docs_updated": false,
+      "user_confirmed": false
+    },
+    "exit_conditions": {
+      "heuristics_met": 0,
+      "heuristics_required": 2,
+      "exit_signal": false
+    },
+    "stagnation": {
+      "current_hash": null,
+      "consecutive_same": 0,
       "threshold": 3
     }
   },
+
+  "simplification": {
+    "enabled": true,
+    "last_run": null,
+    "files_simplified": [],
+    "total_complexity_reduced": 0
+  },
+
   "mode": "default",
   "session_history": []
 }

@@ -1,0 +1,35 @@
+{
+  "version": "4.0.0",
+  "user_profile": {
+    "communication": {
+      "verbosity": "balanced",
+      "explanation_depth": "moderate",
+      "prefers_examples": true,
+      "asks_before_acting": true
+    },
+    "coding": {
+      "languages": [],
+      "frameworks": [],
+      "patterns": [],
+      "test_style": "after",
+      "comment_preference": "moderate"
+    },
+    "workflow": {
+      "commit_style": "conventional",
+      "branch_naming": "feature/description",
+      "review_before_commit": true,
+      "auto_docs": true,
+      "auto_simplify": true
+    },
+    "corrections": [],
+    "preferences_learned": []
+  },
+  "collaboration_state": {
+    "satisfaction_score": 0.85,
+    "recent_corrections": 0,
+    "last_checkpoint": null,
+    "drift_indicators": [],
+    "recalibration_needed": false
+  },
+  "updated": null
+}

@@ -1,0 +1,50 @@
+# `[FUNCTION_NAME]`
+
+[FUNCTION_DESCRIPTION]
+
+## Signature
+
+```[LANGUAGE]
+[FUNCTION_SIGNATURE]
+```
+
+## Parameters
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| [PARAM_NAME] | [PARAM_TYPE] | [REQUIRED] | [DEFAULT] | [PARAM_DESC] |
+
+## Returns
+
+**Type**: `[RETURN_TYPE]`
+
+[RETURN_DESCRIPTION]
+
+## Examples
+
+### Basic Usage
+
+```[LANGUAGE]
+[BASIC_EXAMPLE]
+```
+
+### Advanced Usage
+
+```[LANGUAGE]
+[ADVANCED_EXAMPLE]
+```
+
+## Error Handling
+
+| Error | Condition | Description |
+|-------|-----------|-------------|
+| [ERROR_TYPE] | [CONDITION] | [ERROR_DESC] |
+
+## Source
+
+**File**: `[SOURCE_FILE]`
+**Line**: [LINE_NUMBER]
+
+## See Also
+
+- [[RELATED_FUNCTION]](./[RELATED_FUNCTION].md)

@@ -478,10 +478,12 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 **Update Breakers**:
 ```javascript
 // After each tool call
-state.circuit_breakers.tool_calls.current++
+state.circuit_breakers.tool_calls.iteration_current++
+state.circuit_breakers.tool_calls.cycle_current++
 
 // After each error
-state.circuit_breakers.errors.current++
+state.circuit_breakers.errors.iteration_current++
+state.circuit_breakers.errors.cycle_current++
 state.circuit_breakers.errors.history.push(errorMessage)
 
 // After each file edit
@@ -494,11 +496,11 @@ function checkBreakers(state) {
   const breakers = state.circuit_breakers
 
   for (const [type, config] of Object.entries(breakers)) {
-    if (config.current >= config.limit) {
-      return { tripped: true, type, current: config.current, limit: config.limit }
+    if (config.iteration_current >= config.iteration_limit) {
+      return { tripped: true, type, current: config.iteration_current, limit: config.iteration_limit }
     }
-    if (config.current >= config.warning) {
-      console.warn(`Warning: ${type} at ${config.current}/${config.limit}`)
+    if (config.iteration_current >= config.iteration_warning) {
+      console.warn(`Warning: ${type} at ${config.iteration_current}/${config.iteration_limit}`)
     }
   }
 
@@ -602,9 +604,215 @@ APEX works alongside MCP servers:
 
 ---
 
+---
+
+## Semantic Intelligence Integration (v3.0)
+
+APEX v3.0 adds semantic code understanding through two integrated tools:
+
+### grepai Integration
+
+**Purpose**: Natural language code search + call graph analysis
+
+#### How It Works
+1. **Ollama Backend**: Local LLM generates embeddings
+2. **Vector Database**: ChromaDB stores code chunk embeddings  
+3. **Semantic Search**: Intent-based queries return relevant code
+4. **Call Graph**: AST-based function/class relationship tracing
+
+#### Commands
+
+```bash
+# Semantic search - find code by intent
+grepai search "authentication logic" --json --compact
+
+# Trace callers - who calls this function?
+grepai trace callers "UserService.authenticate" --json
+
+# Trace callees - what does this function call?
+grepai trace callees "handleLogin" --json
+
+# Full call graph - bidirectional relationships
+grepai trace graph "AuthController" --depth 3 --json
+
+# Index repository (run once or after major changes)
+grepai index .
+```
+
+#### MCP Server Mode
+
+```bash
+# Start MCP server
+grepai mcp-serve
+
+# In settings.json
+{
+  "mcpServers": {
+    "grepai": {
+      "command": "grepai",
+      "args": ["mcp-serve"]
+    }
+  }
+}
+```
+
+#### APEX Phase Integration
+
+| Phase | grepai Usage |
+|-------|--------------|
+| DISCOVER | `search "user requirements"` - find related existing code |
+| PLAN | `trace graph "MainModule"` - understand dependencies |
+| TASK | `trace callers/callees` - identify affected functions |
+| EXECUTE | `search "error handling pattern"` - find examples |
+| REVIEW | `trace graph` - verify no broken relationships |
+
+---
+
+### Graph-Code (code-graph-rag) Integration
+
+**Purpose**: Knowledge graph RAG + surgical code editing
+
+#### How It Works
+1. **Memgraph Database**: Stores code as knowledge graph
+2. **Natural Language Queries**: Cypher queries generated from English
+3. **Surgical Editing**: Precise code modifications by qualified name
+4. **Relationship Tracking**: Function calls, imports, inheritance
+
+#### MCP Tools
+
+| Tool | Purpose | Example |
+|------|---------|---------|
+| `query_code_graph` | Natural language → code insights | "Find all functions that call the database" |
+| `get_code_snippet` | Retrieve source by qualified name | Get `auth.service:AuthService.validate` |
+| `surgical_replace_code` | Precise code modification | Replace function body without affecting others |
+| `index_repository` | Build/update knowledge graph | Run after major changes |
+
+#### Graph Schema
+
+```
+(File) -[:CONTAINS]-> (Class/Function)
+(Function) -[:CALLS]-> (Function)
+(Class) -[:INHERITS]-> (Class)
+(Function) -[:USES]-> (Variable)
+(File) -[:IMPORTS]-> (Module)
+```
+
+#### APEX Phase Integration
+
+| Phase | Graph-Code Usage |
+|-------|------------------|
+| DISCOVER | `query_code_graph "what modules handle X"` |
+| PLAN | `query_code_graph "show dependency tree"` |
+| TASK | `get_code_snippet` - get exact function to modify |
+| EXECUTE | `surgical_replace_code` - precise edits |
+| REVIEW | `query_code_graph "verify relationships"` |
+
+---
+
+### Fallback Behavior
+
+APEX v3.0 works without semantic tools (graceful degradation):
+
+| Tool Unavailable | Fallback |
+|------------------|----------|
+| grepai | grep/ripgrep pattern search |
+| Graph-Code | AST grep + manual editing |
+| Both | Standard APEX v2.0 behavior |
+
+Detection happens automatically at session start:
+```javascript
+// In apex-state.json
+{
+  "semantic_tools": {
+    "available": {
+      "grepai": true,
+      "graph_code": false
+    },
+    "fallback_mode": "partial"
+  }
+}
+```
+
+---
+
+### Semantic Search Best Practices
+
+#### Query Formulation
+
+| Bad Query | Good Query |
+|-----------|------------|
+| "auth" | "user authentication and session validation" |
+| "error" | "error handling for API requests" |
+| "fix bug" | "null pointer exception in data processing" |
+
+#### When to Use Each Tool
+
+| Scenario | Recommended Tool |
+|----------|------------------|
+| "Where is X implemented?" | grepai search |
+| "What calls function Y?" | grepai trace callers |
+| "How does module Z work?" | Graph-Code query |
+| "Change function signature" | Graph-Code surgical_replace |
+| "Find similar patterns" | grepai search |
+| "Dependency analysis" | Graph-Code query |
+
+---
+
+### Documentation Builder (v3.0)
+
+The `/apex/docs` command auto-generates documentation:
+
+#### Supported Formats
+
+| Format | Output | Trigger |
+|--------|--------|---------|
+| README | `README.md` | `--readme` or default |
+| API | `docs/API.md` | `--api` |
+| Architecture | `docs/ARCHITECTURE.md` | `--arch` |
+| Changelog | `CHANGELOG.md` | `--changelog` |
+| All | All formats | `--all` |
+
+#### Integration with Semantic Tools
+
+Documentation builder leverages semantic tools when available:
+- **grepai**: Find all exported functions, classes, types
+- **Graph-Code**: Generate accurate dependency diagrams
+- **Fallback**: AST parsing + pattern matching
+
+#### Example Usage
+
+```bash
+# Auto-detect and generate appropriate docs
+/apex/docs
+
+# Generate specific format
+/apex/docs --api
+
+# Generate all documentation
+/apex/docs --all
+
+# Auto-generate after commit (in YOLO mode)
+/apex/yolo "Add user management" --docs
+```
+
+---
+
 ## Version History
 
-### v1.0.0 (Current)
+### v3.0.0 (Current)
+- **Semantic Intelligence**: grepai + Graph-Code integration
+- **Documentation Builder**: Auto-generate README, API, Architecture docs
+- **Enhanced YOLO**: Full tool orchestration with semantic search
+- **MCP Templates**: Pre-configured server settings
+- **Graceful Degradation**: Works without semantic tools
+
+### v2.0.0
+- **Ralph Loop Mode**: `--until` flag for iterative execution
+- **Two-tier counters**: Soft (per-iteration) and hard (per-cycle) limits
+- **New commands**: `/apex/resume`, `/apex/status`, `/apex/help`
+- **Coordinator hook**: Unified Stop hook with exit code 2 magic
+
+### v1.0.0
 - Initial unified release
 - PRISM 3-layer knowledge architecture
 - Planning with Files persistence

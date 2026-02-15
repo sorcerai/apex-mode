@@ -5,7 +5,6 @@
 set -e
 
 APEX_STATE="$HOME/.claude/apex/state/apex-state.json"
-APEX_DIR="$HOME/.claude/apex"
 
 # Ensure state file exists
 if [[ ! -f "$APEX_STATE" ]]; then
@@ -24,7 +23,7 @@ fi
 SESSION_ID=$(echo "$CURRENT_SESSION" | jq -r '.id // "unknown"')
 SESSION_START=$(echo "$CURRENT_SESSION" | jq -r '.started // ""')
 SESSION_PHASE=$(echo "$CURRENT_SESSION" | jq -r '.phase // "unknown"')
-TOOL_CALLS=$(echo "$STATE" | jq -r '.circuit_breakers.tool_calls.current // 0')
+TOOL_CALLS=$(echo "$STATE" | jq -r '.circuit_breakers.tool_calls.iteration_current // 0')
 
 # Create session summary
 SESSION_END=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -34,13 +33,13 @@ STATE=$(echo "$STATE" | jq --arg id "$SESSION_ID" \
     --arg started "$SESSION_START" \
     --arg ended "$SESSION_END" \
     --arg phase "$SESSION_PHASE" \
-    --argjson tools "$TOOL_CALLS" '
+    --arg tools "$TOOL_CALLS" '
     .session_history += [{
         "id": $id,
         "started": $started,
         "ended": $ended,
         "final_phase": $phase,
-        "tool_calls": $tools,
+        "tool_calls": ($tools | tonumber // 0),
         "outcome": "session_end"
     }] |
     .session_history = .session_history[-50:]
@@ -48,8 +47,10 @@ STATE=$(echo "$STATE" | jq --arg id "$SESSION_ID" \
 
 # Reset circuit breakers for next session
 STATE=$(echo "$STATE" | jq '
-    .circuit_breakers.tool_calls.current = 0 |
-    .circuit_breakers.errors.current = 0 |
+    .circuit_breakers.tool_calls.iteration_current = 0 |
+    .circuit_breakers.tool_calls.cycle_current = 0 |
+    .circuit_breakers.errors.iteration_current = 0 |
+    .circuit_breakers.errors.cycle_current = 0 |
     .circuit_breakers.errors.history = [] |
     .circuit_breakers.same_file_edits.files = {} |
     .circuit_breakers.stuck_loop.patterns = []

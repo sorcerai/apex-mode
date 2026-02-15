@@ -4,7 +4,7 @@
 - **Created**: [DATE]
 - **Last Updated**: [DATE]
 - **Current Phase**: [PHASE]
-- **APEX Version**: 1.0.0
+- **APEX Version**: 4.0.0
 
 ---
 

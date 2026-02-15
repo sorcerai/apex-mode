@@ -1,34 +1,58 @@
 ---
-description: "APEX YOLO Mode - Autonomous execution with circuit breaker safety"
+description: "APEX YOLO Mode v4.0 - Full autonomous execution with context efficiency and enhanced loop mode"
 ---
 
 # /apex/yolo
 
-**Full autonomous execution.** Give APEX a task and let it run through the entire lifecycle with circuit breakers as the only guardrails.
+**Full autonomous execution with semantic intelligence, context efficiency, and enhanced loop mode.** Give APEX a task and let it run through the entire lifecycle with intelligent context management, Theory of Mind, and dual-condition exit signals.
 
-## What YOLO Mode Does
+## What YOLO v4.0 Does
 
 ```
 User: "Build a REST API for user management"
          │
          ▼
-    ┌─────────────────────────────────────────────┐
-    │              APEX YOLO MODE                 │
-    │                                             │
-    │  1. DISCOVER - Infer requirements           │
-    │       ↓                                     │
-    │  2. PLAN - Create workflow files            │
-    │       ↓                                     │
-    │  3. TASK - Decompose into todos             │
-    │       ↓                                     │
-    │  4. EXECUTE - Implement (with breakers)     │
-    │       ↓                                     │
-    │  5. REVIEW - Self-validate                  │
-    │       ↓                                     │
-    │  6. COMMIT - Git commit (no push)           │
-    │                                             │
-    │  🛡️ Circuit breakers active throughout      │
-    └─────────────────────────────────────────────┘
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    APEX YOLO v4.0 MODE                      │
+    │                                                             │
+    │  0. CONTEXT LOAD - Strategic lazy loading (NEW)            │
+    │       │ + Load only APEX.md (~2k tokens)                   │
+    │       │ + Check user profile preferences                   │
+    │       │ + ~6k tokens baseline (92% savings)                │
+    │       ↓                                                    │
+    │  1. DISCOVER - Infer requirements                          │
+    │       │ + grepai: search existing patterns                 │
+    │       │ + graph-code: query architecture                   │
+    │       ↓                                                    │
+    │  2. PLAN - Create workflow files                           │
+    │       │ + graph-code: dependency analysis                  │
+    │       │ + grepai: find similar implementations             │
+    │       ↓                                                    │
+    │  3. TASK - Decompose into todos                            │
+    │       ↓                                                    │
+    │  4. EXECUTE - Implement (with breakers)                    │
+    │       │ + grepai: real-time code lookup                    │
+    │       │ + graph-code: surgical editing                     │
+    │       ↓                                                    │
+    │  5. VERIFY - Self-validate + simplify (NEW)                │
+    │       │ + Auto-simplify complex code                       │
+    │       │ + Reduce nesting, improve naming                   │
+    │       ↓                                                    │
+    │  6. REVIEW - Quality validation                            │
+    │       │ + grepai: verify patterns                          │
+    │       │ + graph-code: check relationships                  │
+    │       ↓                                                    │
+    │  7. COMMIT - Git commit (no push)                          │
+    │       ↓                                                    │
+    │  8. DOCS - Auto-generate documentation                     │
+    │       │ + grepai: extract docstrings                       │
+    │       │ + graph-code: API structure                        │
+    │                                                             │
+    │  🛡️ Circuit breakers active throughout                     │
+    │  🧠 Semantic intelligence at every phase                   │
+    │  📦 Context efficiency: lazy load, unload                  │
+    │  🎯 Theory of Mind: adapt to user preferences              │
+    └─────────────────────────────────────────────────────────────┘
          │
          ▼
     Done! (or paused at breaker)
@@ -36,12 +60,16 @@ User: "Build a REST API for user management"
 
 ## Usage
 
-```
+```bash
 /apex/yolo Build a REST API for user management
 
-/apex/yolo --safe Add dark mode toggle to the settings page
+/apex/yolo --safe Add payment processing with high security
 
 /apex/yolo --fast Refactor the auth module to use JWT
+
+/apex/yolo "Implement full auth system" --until --max-iterations 10
+
+/apex/yolo Add dark mode --pr --no-docs
 ```
 
 ## Flags
@@ -51,16 +79,236 @@ User: "Build a REST API for user management"
 | (none) | Default limits: 50 calls, 5 errors, 10 same-file |
 | `--safe` | Tighter limits: 25 calls, 3 errors, 5 same-file |
 | `--fast` | Looser limits: 100 calls, 10 errors, 20 same-file |
+| `--until` | Ralph loop mode (requires --max-iterations) |
+| `--max-iterations N` | Max loop iterations |
 | `--no-commit` | Stop before commit phase |
+| `--no-docs` | Skip documentation generation |
 | `--pr` | Create PR after commit |
+| `--no-semantic` | Disable grepai (fallback to grep) |
+| `--no-graph` | Disable graph-code |
+| `--no-simplify` | Skip code simplification phase |
+| `--no-profile` | Ignore user profile preferences |
+| `--verbose` | Override profile, show detailed output |
+
+## Enhanced Loop Mode (v4.0)
+
+### APEX_STATUS Block
+
+When running in `--until` mode, APEX outputs structured status:
+
+```
+APEX_STATUS
+==================================================
+Phase: EXECUTE
+Iteration: 3/10
+Progress: 65%
+
+Completion Indicators:
+  [x] Code implemented
+  [x] Tests written
+  [ ] Tests passing
+  [ ] Lint clean
+  [ ] Documentation updated
+
+Exit Conditions:
+  Heuristics: 2/4 (need 2+)
+  EXIT_SIGNAL: false
+
+Stagnation: 0/3 (safe)
+State Hash: a7b3c9f2
+==================================================
+```
+
+### Dual-Condition Exit
+
+Loop mode exits ONLY when BOTH conditions met:
+
+1. **Heuristics** (2+ indicators true):
+   - Code implemented and committed
+   - Tests passing
+   - Lint clean
+   - Documentation updated
+
+2. **EXIT_SIGNAL** (explicit completion signal):
+   - All todos marked complete
+   - User confirmation (if high-stakes)
+   - No pending errors
+
+### Stagnation Detection
+
+Prevents infinite loops:
+
+```
+State Hash = hash(todos + files_modified + last_3_actions)
+
+If same hash for 3 consecutive iterations:
+  → STAGNATION DETECTED
+  → Pause and report
+  → Suggest alternative approach
+```
+
+### Progress Phases
+
+```
+INIT → RESEARCH → IMPLEMENT → VERIFY → COMPLETE
+  │        │          │         │         │
+  └────────┴──────────┴─────────┴─────────┘
+              Can loop back on failure
+```
+
+## Execution Flow
+
+### Phase 1: Intelligent Discovery
+
+```bash
+# 1. Read project context
+cat package.json README.md
+
+# 2. Semantic search for existing patterns
+grepai search "similar to user request" --json --compact
+
+# 3. Query knowledge graph for architecture
+query_code_graph "What are the main modules?"
+query_code_graph "How is the codebase structured?"
+
+# 4. Generate requirements WITHOUT asking
+# If critical ambiguity → pause and ask ONE question
+```
+
+**Output**: Structured requirements with codebase context
+
+### Phase 2: Intelligent Planning
+
+```bash
+# 1. Create task_plan.md, notes.md, deliverable.md
+
+# 2. Analyze dependencies via graph
+query_code_graph "What would be affected by these changes?"
+grepai trace callers "ExistingFunction" --json
+
+# 3. Find similar implementations
+grepai search "existing implementation of X" --json
+
+# 4. Break into phases based on graph analysis
+```
+
+**Output**: Plan informed by actual codebase structure
+
+### Phase 3: Task Decomposition
+
+```bash
+# 1. Decompose current phase into atomic todos
+# 2. Each task < 30 min, specific file/function named
+# 3. Load into TodoWrite
+```
+
+### Phase 4: Intelligent Execution
+
+```bash
+# For each task:
+
+# 1. Find relevant code
+grepai search "code related to current task" --json
+
+# 2. Get specific function to modify
+get_code_snippet "Module.functionName"
+
+# 3. Make changes with surgical precision
+surgical_replace_code(
+    file_path="path/to/file",
+    target_code="exact code to replace",
+    replacement_code="new implementation"
+)
+
+# 4. Verify no broken dependencies
+grepai trace callees "ModifiedFunction" --json
+query_code_graph "Check relationships of modified code"
+
+# 5. Circuit breakers check after each tool call
+```
+
+**Safety Features**:
+- On error: retry once with semantic search for solutions
+- On stuck loop: use graph to find alternative approach
+- On approaching limit: warn and continue
+
+### Phase 5: Auto-Simplification (NEW in v4.0)
+
+```bash
+# After implementation, before review:
+
+# 1. Identify complex code in changed files
+git diff --name-only | xargs analyze_complexity
+
+# 2. Apply simplification rules
+# - Flatten nested ternaries
+# - Extract deep nesting to helper functions
+# - Use early returns
+# - Rename unclear variables
+# - Remove redundant boolean comparisons
+
+# 3. Verify tests still pass
+npm run test
+
+# 4. Report improvements
+# "Reduced complexity by 35%, extracted 2 helpers"
+```
+
+### Phase 6: Intelligent Review
+
+```bash
+# 1. Self-review all changes
+git diff
+
+# 2. Verify patterns match codebase style
+grepai search "similar patterns" --json
+
+# 3. Check no unintended dependencies
+query_code_graph "What depends on changed code?"
+grepai trace callers "ChangedFunction" --json
+
+# 4. Run quality checks
+npm run lint && npm run test && npm run build
+
+# 5. If P0/P1 issues → auto-fix → re-review
+```
+
+### Phase 7: Commit
+
+```bash
+# 1. Stage changes
+git add .
+
+# 2. Generate conventional commit
+git commit -m "feat(scope): description"
+
+# 3. Optional: push and create PR
+git push && gh pr create
+```
+
+### Phase 8: Documentation (unless --no-docs)
+
+```bash
+# 1. Analyze changes
+grepai search "new functions and classes" --json
+query_code_graph "What was added/modified?"
+
+# 2. Generate/update docs
+# - README if significant
+# - API docs for new endpoints
+# - Changelog entry
+
+# 3. Commit docs separately
+git add docs/ README.md CHANGELOG.md
+git commit -m "docs: update for <feature>"
+```
 
 ## Circuit Breaker Behavior
-
-YOLO mode does NOT disable safety. It just automates the workflow.
 
 **On Warning (80% of limit)**:
 ```
 ⚠️ APEX Warning: Tool calls at 40/50
+🧠 Consulting semantic search for optimization opportunities...
 Continuing autonomously...
 ```
 
@@ -76,53 +324,21 @@ Progress saved:
 - Tasks completed: 7/12
 - Files modified: 4
 
+🧠 Semantic Analysis:
+- Similar issues found in codebase: 2 patterns
+- Suggested approach: [from grepai]
+
 Options:
 1. "continue" - Reset counter, resume
 2. "continue --fast" - Higher limits, resume
-3. "stop" - Save and exit
-4. "review" - Show what's been done
+3. "try alternative" - Use suggested approach
+4. "stop" - Save and exit
+5. "review" - Show what's been done
 
 What would you like to do?
 ```
 
-## Execution Flow
-
-### Phase 1: Auto-Discover
-- Read project context (package.json, README, existing code)
-- Infer requirements from the task description
-- Generate structured requirements WITHOUT asking questions
-- If critical ambiguity → pause and ask ONE clarifying question
-
-### Phase 2: Auto-Plan
-- Create task_plan.md, notes.md, deliverable.md
-- Break into phases based on complexity
-- Estimate S/M/L for each phase
-
-### Phase 3: Auto-Task
-- Decompose current phase into atomic todos
-- Prioritize by dependency order
-- Load into TodoWrite
-
-### Phase 4: Auto-Execute
-- Work through todos sequentially
-- Update notes.md with discoveries
-- Circuit breakers active on every tool call
-- On error: retry once, then continue to next task
-- On stuck loop: pause and report
-
-### Phase 5: Auto-Review
-- Self-review all changes
-- Run available quality checks (lint, test, build)
-- Document findings in deliverable.md
-- If P0/P1 issues found → attempt auto-fix → re-review
-
-### Phase 6: Auto-Commit
-- Stage all relevant changes
-- Generate conventional commit message
-- Create commit (NO push unless --pr flag)
-- If --pr: push and create PR
-
-## What YOLO Mode Does NOT Do
+## What YOLO v4.0 Does NOT Do
 
 ❌ Push to remote (unless --pr)
 ❌ Deploy to production
@@ -130,48 +346,86 @@ What would you like to do?
 ❌ Modify system files
 ❌ Bypass circuit breakers
 ❌ Ignore critical errors
+❌ Make changes without understanding context
+❌ Load unnecessary context (token efficient)
 
 ## Example Session
 
 ```
 User: /apex/yolo Add pagination to the products API
 
-APEX: 🚀 YOLO Mode activated
+APEX: 🚀 YOLO v4.0 Mode activated
+
+📦 Context Load...
+   Baseline: 6k tokens (92% available)
+   Profile: concise verbosity, conventional commits
+
+🧠 Semantic Analysis...
+   grepai: Found 3 similar pagination implementations
+   graph-code: Products API in src/api/products.ts
 
 📋 Auto-discovering requirements...
    - Endpoint: GET /api/products
    - Need: page, limit params
-   - Return: paginated response with metadata
+   - Pattern: Match existing pagination in src/api/users.ts
 
 📁 Auto-planning...
-   - Created task_plan.md (3 phases, M complexity)
-   - Created notes.md
-   - Created deliverable.md
+   - Dependencies: ProductService, ProductController
+   - Similar impl: src/api/users.ts:getPaginated()
+   - Created task_plan.md (2 phases, S complexity)
 
 📝 Auto-decomposing Phase 1...
-   - 5 tasks created
+   - 4 tasks created (informed by existing patterns)
 
 ⚡ Auto-executing...
-   [1/5] ✅ Add pagination params to route handler
-   [2/5] ✅ Update service layer for offset/limit
-   [3/5] ✅ Add total count query
-   [4/5] ✅ Format paginated response
-   [5/5] ✅ Add pagination tests
+   [1/4] ✅ Add pagination types (copied from users)
+   [2/4] ✅ Update ProductService.list() with offset/limit
+         📍 surgical_replace_code applied
+   [3/4] ✅ Update ProductController with query params
+   [4/4] ✅ Add pagination tests (based on user tests)
 
-   ⚠️ Tool calls: 42/50
+   ⚠️ Tool calls: 38/50
+
+🧹 Auto-simplifying...
+   - src/api/products.ts: Complexity 12→7 (-42%)
+   - Flattened: 1 nested conditional
 
 🔍 Auto-reviewing...
    - Lint: ✅ Pass
-   - Tests: ✅ 8/8 passing
-   - No P0/P1 issues
+   - Tests: ✅ 12/12 passing
+   - Graph check: ✅ No broken dependencies
+   - Pattern match: ✅ Consistent with codebase
+
+APEX_STATUS
+==================================================
+Phase: COMPLETE
+Iteration: 1/1
+Progress: 100%
+
+Completion Indicators:
+  [x] Code implemented
+  [x] Tests passing
+  [x] Lint clean
+  [x] Simplified
+
+Exit Conditions:
+  Heuristics: 4/4 ✓
+  EXIT_SIGNAL: true ✓
+==================================================
 
 📦 Auto-committing...
    - Commit: feat(api): add pagination to products endpoint
 
-✅ YOLO complete!
-   - 5 tasks completed
-   - 4 files modified
-   - 47 tool calls used
+📚 Auto-documenting...
+   - Updated: docs/api/products.md
+   - Added: Changelog entry
+
+✅ YOLO v4.0 complete!
+   - 4 tasks completed
+   - 3 files modified
+   - 1 doc updated
+   - 42 tool calls used
+   - Context efficiency: 89%
    - Commit: abc123f
 
 Files: task_plan.md, notes.md, deliverable.md updated
@@ -179,31 +433,69 @@ Files: task_plan.md, notes.md, deliverable.md updated
 
 ## Recovery from Breaker Trip
 
-If you come back to a paused YOLO session:
-
 ```
 User: /apex/yolo continue
 
-APEX: 📂 Resuming YOLO session...
+APEX: 📂 Resuming YOLO v4.0 session...
 
 Previous state:
 - Task: "Add pagination to products API"
-- Phase: execute (task 8/12)
+- Phase: execute (task 3/4)
 - Breaker: tool_calls hit 50/50
+
+🧠 Semantic context restored:
+- Last working on: ProductController
+- Similar completed: 2/4 tasks
+- Suggested next: Update controller with query params
 
 Resuming with fresh limits (50 more calls).
 ```
 
+## Tool Availability Check
+
+At startup, YOLO checks for available tools:
+
+```
+🔧 Tool Check:
+   ✅ grepai: Available (index current)
+   ✅ graph-code: Available (Memgraph connected)
+   ✅ Circuit breakers: Armed (default mode)
+   
+Proceeding with full intelligence stack.
+```
+
+If tools unavailable:
+
+```
+🔧 Tool Check:
+   ❌ grepai: Not found (falling back to grep)
+   ✅ graph-code: Available
+   ✅ Circuit breakers: Armed
+   
+⚠️ Proceeding with reduced semantic capability.
+   Install grepai for better results: curl -sSL ... | sh
+```
+
 ## Safety Philosophy
 
-> "YOLO mode is autonomous, not reckless."
+> "YOLO v4.0 is autonomous, intelligent, AND efficient."
 
-The circuit breakers exist because autonomous agents can:
-- Get stuck in loops
-- Make the same mistake repeatedly
-- Burn through resources without progress
+The combination of:
+- **grepai**: Understand before you search
+- **graph-code**: Understand before you change
+- **Circuit breakers**: Pause before you break
+- **Context efficiency**: Load only what you need
+- **Theory of Mind**: Adapt to user preferences
+- **Simplification**: Clean before you commit
 
-YOLO mode trusts the breakers to catch these issues. When they trip, a human decides whether to continue or course-correct.
+Creates an agent that:
+1. Learns from existing code patterns
+2. Understands impact before making changes
+3. Stops when stuck rather than thrashing
+4. Manages context for long sessions
+5. Adapts to how you work
+6. Leaves code cleaner than it found it
+7. Documents what it does
 
 This is Ralph's philosophy: **"Autonomy with guardrails."**
 

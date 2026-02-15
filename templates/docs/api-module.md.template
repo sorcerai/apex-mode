@@ -1,0 +1,49 @@
+# [MODULE_NAME]
+
+[MODULE_DESCRIPTION]
+
+## Overview
+
+**Path**: `[MODULE_PATH]`
+**Exports**: [EXPORT_COUNT] functions, [CLASS_COUNT] classes
+
+## Functions
+
+### `[FUNCTION_NAME]([PARAMS]): [RETURN_TYPE]`
+
+[FUNCTION_DESCRIPTION]
+
+**Parameters**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| [PARAM_NAME] | [PARAM_TYPE] | [REQUIRED] | [PARAM_DESC] |
+
+**Returns**: [RETURN_DESCRIPTION]
+
+**Example**:
+```[LANGUAGE]
+[USAGE_EXAMPLE]
+```
+
+## Classes
+
+### `[CLASS_NAME]`
+
+[CLASS_DESCRIPTION]
+
+**Constructor**: `new [CLASS_NAME]([CONSTRUCTOR_PARAMS])`
+
+#### Methods
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| [METHOD] | [PARAMS] | [RETURN] | [DESC] |
+
+## Dependencies
+
+- [DEPENDENCY_1]
+- [DEPENDENCY_2]
+
+## Related Modules
+
+- [[RELATED_MODULE]](./[RELATED_MODULE].md)

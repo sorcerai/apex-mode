@@ -1,0 +1,61 @@
+# Architecture Overview
+
+## System Diagram
+
+```
+[ASCII_OR_MERMAID_DIAGRAM]
+```
+
+## Components
+
+### [COMPONENT_NAME]
+
+**Purpose**: [COMPONENT_PURPOSE]
+**Path**: `[COMPONENT_PATH]`
+**Dependencies**: [DEPENDENCIES]
+
+#### Responsibilities
+- [RESPONSIBILITY_1]
+- [RESPONSIBILITY_2]
+
+#### Interfaces
+| Interface | Type | Description |
+|-----------|------|-------------|
+| [INTERFACE] | [TYPE] | [DESC] |
+
+## Data Flow
+
+```
+[DATA_FLOW_DIAGRAM]
+```
+
+### [FLOW_NAME]
+
+1. [STEP_1]
+2. [STEP_2]
+3. [STEP_3]
+
+## External Dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| [PACKAGE] | [VERSION] | [PURPOSE] |
+
+## Design Decisions
+
+### [DECISION_TITLE]
+
+**Date**: [DATE]
+**Status**: [accepted|deprecated|superseded]
+
+**Context**: [CONTEXT]
+
+**Decision**: [DECISION]
+
+**Consequences**:
+- [CONSEQUENCE_1]
+- [CONSEQUENCE_2]
+
+## Deployment
+
+[DEPLOYMENT_NOTES]
