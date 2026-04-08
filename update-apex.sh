@@ -1,7 +1,7 @@
 #!/bin/bash
 # APEX Updater v4.0 - Pull latest from upstream sources and regenerate
 # Usage: ./update-apex.sh [component]
-# Components: prism, planning, aidd, ralph, grepai, graph-code, navigator, pilot, all
+# Components: prism, planning, aidd, ralph, graph-code, navigator, pilot, all
 
 set -e
 
@@ -84,20 +84,6 @@ update_ralph() {
     fi
 }
 
-update_grepai() {
-    if clone_repo "grepai" "https://github.com/yoanbernabeu/grepai.git"; then
-        echo ""
-        echo "APEX files to update: integrations/grepai/README.md, mcp/grepai.json, skills/apex-semantic.md"
-
-        # Check version
-        if [[ -f "$TEMP_DIR/grepai/pyproject.toml" ]]; then
-            local version
-            version=$(grep -m1 'version' "$TEMP_DIR/grepai/pyproject.toml" 2>/dev/null | head -1)
-            echo -e "${CYAN}Version:${NC} $version"
-        fi
-    fi
-}
-
 update_graph_code() {
     if clone_repo "graph-code" "https://github.com/vitali87/code-graph-rag.git"; then
         echo ""
@@ -150,9 +136,6 @@ case "$COMPONENT" in
     ralph)
         update_ralph
         ;;
-    grepai)
-        update_grepai
-        ;;
     graph-code)
         update_graph_code
         ;;
@@ -171,8 +154,6 @@ case "$COMPONENT" in
         echo ""
         update_ralph
         echo ""
-        update_grepai
-        echo ""
         update_graph_code
         echo ""
         update_navigator
@@ -181,7 +162,7 @@ case "$COMPONENT" in
         ;;
     *)
         echo "Unknown component: $COMPONENT"
-        echo "Usage: $0 [prism|planning|aidd|ralph|grepai|graph-code|navigator|pilot|all]"
+        echo "Usage: $0 [prism|planning|aidd|ralph|graph-code|navigator|pilot|all]"
         exit 1
         ;;
 esac

@@ -608,65 +608,7 @@ APEX works alongside MCP servers:
 
 ## Semantic Intelligence Integration (v3.0)
 
-APEX v3.0 adds semantic code understanding through two integrated tools:
-
-### grepai Integration
-
-**Purpose**: Natural language code search + call graph analysis
-
-#### How It Works
-1. **Ollama Backend**: Local LLM generates embeddings
-2. **Vector Database**: ChromaDB stores code chunk embeddings  
-3. **Semantic Search**: Intent-based queries return relevant code
-4. **Call Graph**: AST-based function/class relationship tracing
-
-#### Commands
-
-```bash
-# Semantic search - find code by intent
-grepai search "authentication logic" --json --compact
-
-# Trace callers - who calls this function?
-grepai trace callers "UserService.authenticate" --json
-
-# Trace callees - what does this function call?
-grepai trace callees "handleLogin" --json
-
-# Full call graph - bidirectional relationships
-grepai trace graph "AuthController" --depth 3 --json
-
-# Index repository (run once or after major changes)
-grepai index .
-```
-
-#### MCP Server Mode
-
-```bash
-# Start MCP server
-grepai mcp-serve
-
-# In settings.json
-{
-  "mcpServers": {
-    "grepai": {
-      "command": "grepai",
-      "args": ["mcp-serve"]
-    }
-  }
-}
-```
-
-#### APEX Phase Integration
-
-| Phase | grepai Usage |
-|-------|--------------|
-| DISCOVER | `search "user requirements"` - find related existing code |
-| PLAN | `trace graph "MainModule"` - understand dependencies |
-| TASK | `trace callers/callees` - identify affected functions |
-| EXECUTE | `search "error handling pattern"` - find examples |
-| REVIEW | `trace graph` - verify no broken relationships |
-
----
+APEX v3.0 adds semantic code understanding through Graph-Code.
 
 ### Graph-Code (code-graph-rag) Integration
 
@@ -715,9 +657,8 @@ APEX v3.0 works without semantic tools (graceful degradation):
 
 | Tool Unavailable | Fallback |
 |------------------|----------|
-| grepai | grep/ripgrep pattern search |
 | Graph-Code | AST grep + manual editing |
-| Both | Standard APEX v2.0 behavior |
+| All semantic tools | Standard APEX v2.0 behavior |
 
 Detection happens automatically at session start:
 ```javascript
@@ -725,7 +666,6 @@ Detection happens automatically at session start:
 {
   "semantic_tools": {
     "available": {
-      "grepai": true,
       "graph_code": false
     },
     "fallback_mode": "partial"
@@ -749,11 +689,11 @@ Detection happens automatically at session start:
 
 | Scenario | Recommended Tool |
 |----------|------------------|
-| "Where is X implemented?" | grepai search |
-| "What calls function Y?" | grepai trace callers |
+| "Where is X implemented?" | Grep / Graph-Code query |
+| "What calls function Y?" | Graph-Code query |
 | "How does module Z work?" | Graph-Code query |
 | "Change function signature" | Graph-Code surgical_replace |
-| "Find similar patterns" | grepai search |
+| "Find similar patterns" | Grep |
 | "Dependency analysis" | Graph-Code query |
 
 ---
@@ -775,7 +715,7 @@ The `/apex/docs` command auto-generates documentation:
 #### Integration with Semantic Tools
 
 Documentation builder leverages semantic tools when available:
-- **grepai**: Find all exported functions, classes, types
+- **Grep**: Find all exported functions, classes, types
 - **Graph-Code**: Generate accurate dependency diagrams
 - **Fallback**: AST parsing + pattern matching
 
@@ -800,7 +740,7 @@ Documentation builder leverages semantic tools when available:
 ## Version History
 
 ### v3.0.0 (Current)
-- **Semantic Intelligence**: grepai + Graph-Code integration
+- **Semantic Intelligence**: Graph-Code integration
 - **Documentation Builder**: Auto-generate README, API, Architecture docs
 - **Enhanced YOLO**: Full tool orchestration with semantic search
 - **MCP Templates**: Pre-configured server settings
