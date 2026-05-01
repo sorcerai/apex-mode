@@ -97,6 +97,6 @@ Profile:
 
 ## State File
 
-Raw state is stored at `~/.claude/apex/state/apex-state.json`
+Raw state is stored at `~/.config/opencode/apex/state/apex-state.json`
 
 Use `--json` flag to dump the raw state for debugging.

@@ -4,17 +4,28 @@
       "command": "grepai",
       "args": ["mcp-serve"],
       "env": {
-        "OLLAMA_HOST": "http://localhost:11434",
-        "OLLAMA_MODEL": "nomic-embed-text"
+        "APEX_EMBEDDER_URL": "http://127.0.0.1:8090",
+        "APEX_EMBEDDER_MODEL": "intfloat/e5-base-v2",
+        "APEX_EMBEDDER_DIM": "768",
+        "APEX_RERANKER_URL": "http://127.0.0.1:8091",
+        "APEX_RERANKER_MODEL": "jinaai/jina-reranker-v1-tiny-en",
+        "GREPAI_CACHE_DIR": "~/.cache/grepai",
+        "GREPAI_INDEX_PATH": ".grepai-index"
       }
     },
     "graph-code": {
       "command": "python",
       "args": ["-m", "code_graph_rag.mcp_server"],
-      "cwd": "~/.claude/apex/integrations/graph-code/src",
+      "cwd": "~/.config/opencode/apex/integrations/graph-code/src",
       "env": {
         "MEMGRAPH_HOST": "localhost",
-        "MEMGRAPH_PORT": "7687"
+        "MEMGRAPH_PORT": "7687",
+        "MEMGRAPH_USER": "",
+        "MEMGRAPH_PASSWORD": "",
+        "GRAPH_CODE_CACHE": "~/.cache/graph-code",
+        "APEX_EMBEDDER_URL": "http://127.0.0.1:8090",
+        "APEX_EMBEDDER_MODEL": "intfloat/e5-base-v2",
+        "APEX_EMBEDDER_DIM": "768"
       }
     }
   }

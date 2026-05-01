@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-APEX_STATE_DIR = Path.home() / ".claude" / "apex" / "state"
+APEX_STATE_DIR = Path(os.environ.get("APEX_STATE_DIR", Path.home() / ".config" / "opencode" / "apex" / "state"))
 SWARM_QUEUE = APEX_STATE_DIR / "swarm-queue.json"
 
 

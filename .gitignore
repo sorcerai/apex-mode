@@ -11,6 +11,15 @@ Thumbs.db
 
 # State (user-specific)
 state/apex-state.json
+hooks/CLAUDE.md
+state/CLAUDE.md
+.claude/
+.claude-flow/
+.swarm/
+
+# Python
+__pycache__/
+*.py[cod]
 
 # Temp
 *.tmp

@@ -4,7 +4,7 @@
 
 set -e
 
-APEX_STATE="$HOME/.claude/apex/state/apex-state.json"
+APEX_STATE="${APEX_STATE:-${APEX_STATE_DIR:-$HOME/.config/opencode/apex/state}/apex-state.json}"
 APEX_LOCK="$APEX_STATE.lock"
 
 if [[ ! -f "$APEX_STATE" ]]; then

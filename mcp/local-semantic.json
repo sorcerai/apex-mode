@@ -1,0 +1,21 @@
+{
+  "semanticServices": {
+    "embedder": {
+      "name": "local-e5-embed",
+      "baseUrl": "http://127.0.0.1:8090",
+      "endpoint": "/v1/embeddings",
+      "apiShape": "openai-embeddings",
+      "model": "intfloat/e5-base-v2",
+      "dimensions": 768,
+      "health": "http://127.0.0.1:8090/health"
+    },
+    "reranker": {
+      "name": "local-jina-rerank",
+      "baseUrl": "http://127.0.0.1:8091",
+      "endpoint": "/v1/rerank",
+      "apiShape": "jina-rerank",
+      "model": "jinaai/jina-reranker-v1-tiny-en",
+      "health": "http://127.0.0.1:8091/health"
+    }
+  }
+}

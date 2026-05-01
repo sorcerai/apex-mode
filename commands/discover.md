@@ -10,7 +10,7 @@ You are entering APEX Discovery phase. Your goal is to transform vague requests 
 
 First, check for existing context:
 1. Look for `task_plan.md` in project root - if exists, ask if continuing or starting fresh
-2. Check `~/.claude/apex/state/apex-state.json` for previous session
+2. Check `~/.config/opencode/apex/state/apex-state.json` for previous session
 3. Read project files (package.json, README, etc.) for technical context
 
 ## Discovery Questions

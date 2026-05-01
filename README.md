@@ -5,7 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-4.0.1-blue.svg)](https://github.com/sorcerai/apex-mode)
 
-APEX v4.0 combines eight complementary systems into one cohesive Claude Code enhancement:
+APEX v4.0 combines eight complementary systems into one cohesive Claude Code enhancement.
+See [`UPSTREAM_SOURCES.md`](UPSTREAM_SOURCES.md) for sync notes and local dependency assumptions.
 
 | System | Source | Contribution |
 |--------|--------|-------------|
@@ -56,9 +57,10 @@ Then in Claude Code:
 /apex/commit     # Git workflow
 /apex/docs       # Generate documentation
 
-# New v4.0 commands
+# New v4.x commands
 /apex/profile    # View/update user preferences
 /apex/simplify   # Simplify recently modified code
+/apex/pilot      # Ticket-driven long-job pipeline patterns
 
 # Recovery commands
 /apex/resume     # Continue after breaker trip
@@ -242,7 +244,8 @@ curl -fsSL https://raw.githubusercontent.com/sorcerai/apex-mode/main/install.sh 
 - `jq` (for circuit breaker hooks)
 
 **Optional (for semantic intelligence):**
-- [Ollama](https://ollama.ai/download) (for grepai)
+- Local OpenAI-shape embedder on `http://127.0.0.1:8090/v1/embeddings` (preferred: `intfloat/e5-base-v2`, 768 dims)
+- Optional local reranker on `http://127.0.0.1:8091/v1/rerank` (preferred: `jinaai/jina-reranker-v1-tiny-en`)
 - [Docker](https://docs.docker.com/get-docker/) (for graph-code Memgraph)
 
 ### Hooks Integration
@@ -254,15 +257,15 @@ Add to `~/.claude/settings.json`:
   "hooks": {
     "PreToolUse": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-circuit-breaker.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-circuit-breaker.sh"}]
     }],
     "PostToolUse": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-metrics.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-metrics.sh"}]
     }],
     "Stop": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-session.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-session.sh"}]
     }]
   }
 }
@@ -277,7 +280,14 @@ For semantic tools, add to your MCP settings:
   "mcpServers": {
     "grepai": {
       "command": "grepai",
-      "args": ["mcp-serve"]
+      "args": ["mcp-serve"],
+      "env": {
+        "APEX_EMBEDDER_URL": "http://127.0.0.1:8090",
+        "APEX_EMBEDDER_MODEL": "intfloat/e5-base-v2",
+        "APEX_EMBEDDER_DIM": "768",
+        "APEX_RERANKER_URL": "http://127.0.0.1:8091",
+        "APEX_RERANKER_MODEL": "jinaai/jina-reranker-v1-tiny-en"
+      }
     },
     "graph-code": {
       "command": "python",
@@ -327,7 +337,7 @@ For semantic tools, add to your MCP settings:
 ## File Structure
 
 ```
-~/.claude/apex/
+~/.config/opencode/apex/
 ├── APEX.md                 # Main entry point (Layer 1)
 ├── APEX_OPERATIONAL.md     # Procedures (Layer 2)
 ├── APEX_REFERENCE.md       # Deep docs (Layer 3)
@@ -434,12 +444,12 @@ APEX unifies:
 
 ```bash
 # Check all upstream sources for updates
-~/.claude/apex/update-apex.sh all
+~/.config/opencode/apex/update-apex.sh all
 
 # Update specific component
-~/.claude/apex/update-apex.sh aidd
-~/.claude/apex/update-apex.sh navigator
-~/.claude/apex/update-apex.sh grepai
+~/.config/opencode/apex/update-apex.sh aidd
+~/.config/opencode/apex/update-apex.sh navigator
+~/.config/opencode/apex/update-apex.sh grepai
 
 # Available: prism, planning, aidd, ralph, grepai, graph-code, navigator, pilot
 ```
@@ -453,7 +463,7 @@ APEX unifies:
 - **Fix**: Semantic tools schema mismatch - installer and circuit breaker now use correct nested `available.grepai` path (tool detection was silently broken)
 - **Fix**: Test fixtures updated from v3 to v4 schema (tests now validate actual behavior)
 - **Fix**: All version strings updated from v3.0/v1.0.0 to v4.0
-- **Fix**: Installer now copies repo's MCP settings template (includes `OLLAMA_MODEL`)
+- **Fix**: Installer now copies repo's MCP settings template (includes local E5/Jina semantic service env)
 - **Fix**: APEX.md table syntax error corrected
 - **New Commands**: `/apex/profile`, `/apex/resume`, `/apex/status`, `/apex/help`
 - **New Templates**: 6 documentation templates in `templates/docs/`

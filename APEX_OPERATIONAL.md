@@ -89,20 +89,20 @@
    □ Note: "Will follow pattern from [file:line]"
 
 3. CREATE TASK_PLAN.MD
-   □ Copy template from ~/.claude/apex/templates/task_plan.md
+   □ Copy template from ~/.config/opencode/apex/templates/task_plan.md
    □ Fill in objective and success criteria
    □ Break down into phases/milestones
    □ Include: "Based on pattern from [existing code]"
    □ Estimate complexity (S/M/L/XL)
 
 4. CREATE NOTES.MD
-   □ Copy template from ~/.claude/apex/templates/notes.md
+   □ Copy template from ~/.config/opencode/apex/templates/notes.md
    □ Document initial context and decisions
    □ Include semantic analysis findings
    □ Note any assumptions made
 
 5. CREATE DELIVERABLE.MD
-   □ Copy template from ~/.claude/apex/templates/deliverable.md
+   □ Copy template from ~/.config/opencode/apex/templates/deliverable.md
    □ Define expected outputs
    □ Set up validation checklist
    □ Include graph verification steps
@@ -407,7 +407,7 @@
    □ Bug fix/feature? → Changelog entry
 
 3. GENERATE DOCUMENTATION
-   □ Use templates from ~/.claude/apex/templates/docs/
+   □ Use templates from ~/.config/opencode/apex/templates/docs/
    □ Include code examples from tests
    □ Generate diagrams if applicable
    □ Cross-reference related docs

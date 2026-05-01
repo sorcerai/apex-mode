@@ -116,12 +116,16 @@ def decompose_task(task: str, max_subtasks: int = 5) -> dict:
         task_id = f"task-{i+1:03d}"
         component_deps = deps.get(component, [])
         
-        # Convert component names to task IDs
+        # Convert component names to task IDs, preserving order while removing duplicates.
         dep_ids = []
+        seen_dep_ids = set()
         for dep in component_deps:
             if dep in components:
                 dep_idx = components.index(dep)
-                dep_ids.append(f"task-{dep_idx+1:03d}")
+                dep_id = f"task-{dep_idx+1:03d}"
+                if dep_id not in seen_dep_ids:
+                    dep_ids.append(dep_id)
+                    seen_dep_ids.add(dep_id)
         
         subtasks.append({
             "id": task_id,

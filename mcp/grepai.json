@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "grepai": {
+      "command": "grepai",
+      "args": ["mcp-serve"],
+      "env": {
+        "APEX_EMBEDDER_URL": "http://127.0.0.1:8090",
+        "APEX_EMBEDDER_MODEL": "intfloat/e5-base-v2",
+        "APEX_EMBEDDER_DIM": "768",
+        "APEX_RERANKER_URL": "http://127.0.0.1:8091",
+        "APEX_RERANKER_MODEL": "jinaai/jina-reranker-v1-tiny-en",
+        "GREPAI_CACHE_DIR": "~/.cache/grepai",
+        "GREPAI_INDEX_PATH": ".grepai-index"
+      }
+    }
+  }
+}

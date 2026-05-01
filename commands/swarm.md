@@ -155,7 +155,7 @@ git branch -D apex-swarm-1 apex-swarm-2 apex-swarm-3
 
 ## Swarm Queue
 
-Persistent queue in `~/.claude/apex/state/swarm-queue.json`:
+Persistent queue in `~/.config/opencode/apex/state/swarm-queue.json`:
 
 ```json
 {

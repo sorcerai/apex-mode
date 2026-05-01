@@ -94,6 +94,8 @@ User: "Build a REST API for user management"
 
 ### APEX_STATUS Block
 
+Merged from Navigator v6 loop mode and Pilot Signal Protocol v2: APEX uses visible status blocks plus machine-parseable `pilot-signal` code blocks for completion/handoff automation.
+
 When running in `--until` mode, APEX outputs structured status:
 
 ```
@@ -121,6 +123,16 @@ State Hash: a7b3c9f2
 
 ### Dual-Condition Exit
 
+Loop mode exits ONLY when BOTH conditions met. Use `functions/exit_gate.py` for machine evaluation.
+
+Example:
+
+```bash
+python functions/exit_gate.py \
+  --indicators '{"code_implemented":true,"tests_passing":true,"code_simplified":true}' \
+  --exit-signal true
+```
+
 Loop mode exits ONLY when BOTH conditions met:
 
 1. **Heuristics** (2+ indicators true):
@@ -133,6 +145,11 @@ Loop mode exits ONLY when BOTH conditions met:
    - All todos marked complete
    - User confirmation (if high-stakes)
    - No pending errors
+   - A `pilot-signal` block may be emitted:
+
+```pilot-signal
+{"v":2,"type":"exit","success":true,"reason":"All criteria met"}
+```
 
 ### Stagnation Detection
 

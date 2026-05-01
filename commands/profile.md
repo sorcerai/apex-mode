@@ -39,7 +39,7 @@ The profile system tracks your preferences so APEX can:
 
 ## Profile Location
 
-Stored at `~/.claude/apex/state/apex-profile.json`
+Stored at `~/.config/opencode/apex/state/apex-profile.json`
 
 ---
 

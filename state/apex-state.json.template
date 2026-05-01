@@ -85,7 +85,7 @@
   },
 
   "theory_of_mind": {
-    "profile_path": "~/.claude/apex/state/apex-profile.json",
+    "profile_path": "~/.config/opencode/apex/state/apex-profile.json",
     "satisfaction_score": 0.85,
     "recent_corrections": 0,
     "drift_detected": false,

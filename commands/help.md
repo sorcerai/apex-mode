@@ -24,6 +24,7 @@ Quick reference for all APEX commands and their usage.
 | `/apex/profile` | View/update user preferences | Utility |
 | `/apex/resume` | Reset circuit breakers, continue after trip | Utility |
 | `/apex/status` | Show current state and metrics | Utility |
+| `/apex/pilot` | Ticket-driven long-job / Pilot integration patterns | Utility |
 | `/apex/help` | This help page | Utility |
 
 ---
@@ -76,8 +77,12 @@ Or use `/apex/yolo [task]` to run the entire pipeline autonomously.
 | `task_plan.md` | Roadmap with phases (project root) |
 | `notes.md` | Session context and decisions (project root) |
 | `deliverable.md` | Outputs and validation (project root) |
-| `~/.claude/apex/state/apex-state.json` | Circuit breakers + session state |
-| `~/.claude/apex/state/apex-profile.json` | User preferences |
+| `~/.config/opencode/apex/state/apex-state.json` | Circuit breakers + session state |
+| `~/.config/opencode/apex/state/apex-profile.json` | User preferences |
+| `~/.config/opencode/apex/UPSTREAM_SOURCES.md` | Upstream dependency map |
+| `functions/exit_gate.py` | Dual-condition completion gate |
+| `functions/status_generator.py` | APEX_STATUS generator |
+| `functions/signal_parser.py` | Pilot Signal Protocol parser |
 
 ---
 

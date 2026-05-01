@@ -174,7 +174,7 @@ Create in project root:
 
 ## Initialize APEX State
 
-Update `~/.claude/apex/state/apex-state.json`:
+Update `~/.config/opencode/apex/state/apex-state.json`:
 
 ```json
 {

@@ -1,6 +1,6 @@
 #!/bin/bash
 # APEX Installer v4.0
-# Installs APEX to ~/.claude/apex/ with semantic intelligence, context efficiency, and Theory of Mind
+# Installs APEX to ~/.config/opencode/apex/ with semantic intelligence, context efficiency, and Theory of Mind
 
 set -e
 
@@ -25,7 +25,7 @@ echo "====================================="
 echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APEX_DIR="$HOME/.claude/apex"
+APEX_DIR="${APEX_DIR:-$HOME/.config/opencode/apex}"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
 MCP_DIR="$APEX_DIR/mcp"
@@ -135,19 +135,25 @@ fi
 echo -e "${BLUE}[4/7]${NC} Semantic tools setup..."
 
 if [[ "$SKIP_OPTIONAL" == "false" ]]; then
-    # Check for Ollama (required for grepai)
-    if command -v ollama &> /dev/null; then
-        echo -e "${GREEN}✓ Ollama detected${NC}"
-        OLLAMA_AVAILABLE=true
+    # Check for the preferred local semantic services used by APEX.
+    if curl -fsS --max-time 2 "${APEX_EMBEDDER_URL:-http://127.0.0.1:8090}/health" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ Local E5 embedder detected (${APEX_EMBEDDER_URL:-http://127.0.0.1:8090})${NC}"
+        LOCAL_EMBEDDER_AVAILABLE=true
     else
-        echo -e "${YELLOW}⚠ Ollama not found (required for grepai)${NC}"
-        echo "  Install: https://ollama.ai/download"
-        OLLAMA_AVAILABLE=false
+        echo -e "${YELLOW}⚠ Local E5 embedder not responding at ${APEX_EMBEDDER_URL:-http://127.0.0.1:8090}${NC}"
+        echo "  Expected OpenAI-shape endpoint: /v1/embeddings, model intfloat/e5-base-v2"
+        LOCAL_EMBEDDER_AVAILABLE=false
+    fi
+
+    if curl -fsS --max-time 2 "${APEX_RERANKER_URL:-http://127.0.0.1:8091}/health" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ Local Jina reranker detected (${APEX_RERANKER_URL:-http://127.0.0.1:8091})${NC}"
+    else
+        echo -e "${YELLOW}○ Local reranker not responding at ${APEX_RERANKER_URL:-http://127.0.0.1:8091} (optional)${NC}"
     fi
 
     # grepai installation
     if [[ "$INSTALL_GREPAI" == "true" ]] || [[ "$INSTALL_ALL" == "false" && "$SKIP_OPTIONAL" == "false" ]]; then
-        if [[ "$INSTALL_GREPAI" != "true" && "$OLLAMA_AVAILABLE" == "true" ]]; then
+        if [[ "$INSTALL_GREPAI" != "true" && "$LOCAL_EMBEDDER_AVAILABLE" == "true" ]]; then
             read -p "Install grepai (semantic code search)? [y/N] " -n 1 -r
             echo ""
             if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -234,7 +240,7 @@ mv "$APEX_DIR/state/apex-state.json.tmp" "$APEX_DIR/state/apex-state.json" 2>/de
 # Create MCP configuration templates
 echo -e "${BLUE}[5/7]${NC} Creating MCP configuration templates..."
 
-# Copy the complete MCP settings template from repo (includes OLLAMA_MODEL etc.)
+# Copy the complete MCP settings template from repo (includes local E5/Jina service env).
 if [[ -f "$SCRIPT_DIR/mcp/settings.json.template" ]]; then
     cp "$SCRIPT_DIR/mcp/settings.json.template" "$MCP_DIR/settings.json.template"
 else
@@ -246,14 +252,17 @@ else
       "command": "grepai",
       "args": ["mcp-serve"],
       "env": {
-        "OLLAMA_HOST": "http://localhost:11434",
-        "OLLAMA_MODEL": "nomic-embed-text"
+        "APEX_EMBEDDER_URL": "http://127.0.0.1:8090",
+        "APEX_EMBEDDER_MODEL": "intfloat/e5-base-v2",
+        "APEX_EMBEDDER_DIM": "768",
+        "APEX_RERANKER_URL": "http://127.0.0.1:8091",
+        "APEX_RERANKER_MODEL": "jinaai/jina-reranker-v1-tiny-en"
       }
     },
     "graph-code": {
       "command": "python",
       "args": ["-m", "code_graph_rag.mcp_server"],
-      "cwd": "~/.claude/apex/integrations/graph-code/src",
+      "cwd": "~/.config/opencode/apex/integrations/graph-code/src",
       "env": {
         "MEMGRAPH_HOST": "localhost",
         "MEMGRAPH_PORT": "7687"
@@ -280,15 +289,15 @@ if [[ -f "$SETTINGS_FILE" ]]; then
   "hooks": {
     "PreToolUse": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-circuit-breaker.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-circuit-breaker.sh"}]
     }],
     "PostToolUse": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-metrics.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-metrics.sh"}]
     }],
     "Stop": [{
       "matcher": "",
-      "hooks": [{"type": "command", "command": "~/.claude/apex/hooks/apex-session.sh"}]
+      "hooks": [{"type": "command", "command": "~/.config/opencode/apex/hooks/apex-session.sh"}]
     }]
   }
 }
@@ -369,7 +378,8 @@ echo ""
 if [[ "$GREPAI_STATUS" == "true" || "$GRAPHCODE_STATUS" == "true" ]]; then
     echo -e "${CYAN}To start semantic services:${NC}"
     if [[ "$GREPAI_STATUS" == "true" ]]; then
-        echo "  ollama serve  # Required for grepai"
+        echo "  python3 /Users/ariapramesi/services/e5-embed/server.py  # local E5 embedder"
+        echo "  python3 /Users/ariapramesi/services/jina-rerank/server.py  # optional reranker"
     fi
     if [[ "$GRAPHCODE_STATUS" == "true" ]]; then
         echo "  docker run -d -p 7687:7687 memgraph/memgraph-platform  # Required for graph-code"

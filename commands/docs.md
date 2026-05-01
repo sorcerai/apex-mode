@@ -281,7 +281,7 @@ When running `/apex/yolo` without `--no-docs`:
 
 ## Templates
 
-Documentation templates in `~/.claude/apex/templates/docs/`:
+Documentation templates in `~/.config/opencode/apex/templates/docs/`:
 
 - `readme.md.template`
 - `api-module.md.template`

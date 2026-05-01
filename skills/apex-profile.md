@@ -26,7 +26,7 @@ APEX v4.0 builds a profile of user preferences and detects when collaboration is
 
 ### Profile Storage
 
-Location: `~/.claude/apex/state/apex-profile.json`
+Location: `~/.config/opencode/apex/state/apex-profile.json`
 
 ```json
 {

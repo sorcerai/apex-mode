@@ -6,6 +6,8 @@
 
 ## Upstream Sources
 
+Detailed sync notes and local dependency assumptions live in [`UPSTREAM_SOURCES.md`](UPSTREAM_SOURCES.md).
+
 | Component | Source | Version/Commit | Last Synced |
 |-----------|--------|----------------|-------------|
 | PRISM | /Users/ariapramesi/Downloads/PRISM v3.3.zip | v3.3 | 2026-01-08 |
@@ -57,19 +59,29 @@
 - State Schema → state/apex-state.json.template (expanded)
 - Profile Schema → state/apex-profile.json.template (new)
 
-### Pilot (v4.0.1) → APEX Files
-- Tracked as upstream source for evaluation
+### Pilot (v4.0.1+) → APEX Files
+- Ticket-driven pipeline → commands/pilot.md
+- Signal Protocol v2 → functions/signal_parser.py, commands/yolo.md
+- Dual completion gates → functions/exit_gate.py
 - Autonomous ticket-driven dev pipeline (companion to Navigator)
-- Signal Protocol v2 integration with Navigator v6.2.1+
 
 ## Changelog
+
+### 4.0.2-local (2026-04-30)
+- **Merged**: Navigator v6 status/loop concepts into `/apex/yolo` docs.
+- **Merged**: Pilot ticket-driven pipeline patterns into new `/apex/pilot` command.
+- **New**: `functions/exit_gate.py` for dual-condition completion gates.
+- **New**: `functions/status_generator.py` for APEX_STATUS blocks.
+- **New**: `functions/signal_parser.py` for Pilot Signal Protocol v2 code blocks.
+- **New**: `UPSTREAM_SOURCES.md` upstream dependency manifest.
+- **Updated**: Local semantic stack defaults to E5 embedder on :8090 and Jina reranker on :8091.
 
 ### 4.0.1 (2026-02-15)
 - **Fix**: Hook-to-state schema mismatch - removed phantom `.current` fields, hooks now use `iteration_current`/`cycle_current`
 - **Fix**: Semantic tools schema mismatch - installer/circuit-breaker now use nested `available.grepai` path
 - **Fix**: Test fixtures updated from v3 to v4 schema (42→48 tests)
 - **Fix**: Version strings updated from v3.0/v1.0.0 to v4.0 across all files
-- **Fix**: Installer copies repo MCP template instead of inline (preserves `OLLAMA_MODEL`)
+- **Fix**: Installer copies repo MCP template instead of inline (preserves local E5/Jina semantic service env)
 - **Fix**: APEX.md table syntax corrected
 - **Fix**: APEX_REFERENCE.md code examples updated to v4 schema
 - **New**: Commands `profile.md`, `resume.md`, `status.md`, `help.md`
@@ -112,10 +124,10 @@
 
 ```bash
 # Check for upstream changes
-~/.claude/apex/update-apex.sh all
+~/.config/opencode/apex/update-apex.sh all
 
 # Update specific component
-~/.claude/apex/update-apex.sh aidd
+~/.config/opencode/apex/update-apex.sh aidd
 
 # Then ask Claude to merge changes
 "Update APEX commands from /tmp/apex-update-*/aidd"

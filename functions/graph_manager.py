@@ -15,8 +15,8 @@ from datetime import datetime
 from typing import Optional
 
 
-APEX_DIR = Path.home() / ".claude" / "apex"
-GRAPH_PATH = APEX_DIR / "state" / "knowledge-graph.json"
+APEX_DIR = Path(os.environ.get("APEX_DIR", Path.home() / ".config" / "opencode" / "apex"))
+GRAPH_PATH = Path(os.environ.get("APEX_GRAPH_PATH", APEX_DIR / "state" / "knowledge-graph.json"))
 
 
 def init_graph(project_path: str = ".") -> dict:

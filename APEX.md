@@ -244,7 +244,7 @@ Target: >85% (peak < 30k tokens used)
 
 ### User Profile
 
-Stored at `~/.claude/apex/state/apex-profile.json`:
+Stored at `~/.config/opencode/apex/state/apex-profile.json`:
 - Communication style (concise/verbose)
 - Coding preferences (patterns, frameworks)
 - Workflow settings (commit style, auto-docs)
@@ -348,7 +348,7 @@ APEX maintains files that survive context resets:
 - `PROMPT.md` - (Ralph mode) Invariant task definition
 
 ### State
-- `~/.claude/apex/state/apex-state.json` - Circuit breakers + session
+- `~/.config/opencode/apex/state/apex-state.json` - Circuit breakers + session
 
 ---
 

@@ -3,7 +3,7 @@
     "graph-code": {
       "command": "python",
       "args": ["-m", "code_graph_rag.mcp_server"],
-      "cwd": "~/.claude/apex/integrations/graph-code/src",
+      "cwd": "~/.config/opencode/apex/integrations/graph-code/src",
       "env": {
         "MEMGRAPH_HOST": "localhost",
         "MEMGRAPH_PORT": "7687",

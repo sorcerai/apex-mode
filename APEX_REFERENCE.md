@@ -571,7 +571,7 @@ function checkBreakers(state) {
 # In ~/.claude/CLAUDE.md
 
 ## APEX Integration
-@~/.claude/apex/APEX.md
+@~/.config/opencode/apex/APEX.md
 
 ## When to Use APEX
 - Multi-step features
@@ -589,7 +589,7 @@ APEX hooks can coexist with other hooks:
   "hooks": {
     "PreToolUse": [
       { "command": "existing-hook.sh" },
-      { "command": "~/.claude/apex/hooks/apex-circuit-breaker.sh" }
+      { "command": "~/.config/opencode/apex/hooks/apex-circuit-breaker.sh" }
     ]
   }
 }
@@ -775,7 +775,7 @@ The knowledge graph stores:
 
 ### Location
 
-`~/.claude/apex/state/knowledge-graph.json`
+`~/.config/opencode/apex/state/knowledge-graph.json`
 
 ### Commands
 

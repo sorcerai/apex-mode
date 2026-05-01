@@ -8,7 +8,7 @@ You are entering APEX Execution phase. Implement tasks with circuit breaker prot
 
 ## Pre-flight Check
 
-1. **Load State**: Read `~/.claude/apex/state/apex-state.json`
+1. **Load State**: Read `~/.config/opencode/apex/state/apex-state.json`
 2. **Check Breakers**: Verify all circuit breakers are green
 3. **Load Context**: Read task_plan.md and notes.md
 4. **Verify Todos**: Confirm TodoWrite has pending tasks

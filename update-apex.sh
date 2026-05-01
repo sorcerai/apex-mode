@@ -1,11 +1,11 @@
 #!/bin/bash
 # APEX Updater v4.0 - Pull latest from upstream sources and regenerate
 # Usage: ./update-apex.sh [component]
-# Components: prism, planning, aidd, ralph, graph-code, navigator, pilot, all
+# Components: prism, planning, aidd, ralph, grepai, graph-code, navigator, pilot, all
 
 set -e
 
-APEX_DIR="$HOME/.claude/apex"
+APEX_DIR="${APEX_DIR:-$HOME/.config/opencode/apex}"
 TEMP_DIR="/tmp/apex-update-$(date +%s)"
 mkdir -p "$TEMP_DIR"
 
@@ -84,6 +84,22 @@ update_ralph() {
     fi
 }
 
+update_grepai() {
+    if clone_repo "grepai" "https://github.com/yoanbernabeu/grepai.git"; then
+        echo ""
+        echo "grepai provides semantic code search + call graph tracing."
+        echo "APEX files to update: integrations/grepai/README.md, mcp/grepai.json, mcp/settings.json.template, skills/apex-semantic.md"
+        echo "Local semantic service defaults should remain: E5 embedder on :8090 and Jina reranker on :8091."
+
+        # Check Python package metadata if present
+        if [[ -f "$TEMP_DIR/grepai/pyproject.toml" ]]; then
+            local version
+            version=$(grep -m1 'version' "$TEMP_DIR/grepai/pyproject.toml" 2>/dev/null | head -1)
+            echo -e "${CYAN}Version:${NC} $version"
+        fi
+    fi
+}
+
 update_graph_code() {
     if clone_repo "graph-code" "https://github.com/vitali87/code-graph-rag.git"; then
         echo ""
@@ -136,6 +152,9 @@ case "$COMPONENT" in
     ralph)
         update_ralph
         ;;
+    grepai)
+        update_grepai
+        ;;
     graph-code)
         update_graph_code
         ;;
@@ -154,6 +173,8 @@ case "$COMPONENT" in
         echo ""
         update_ralph
         echo ""
+        update_grepai
+        echo ""
         update_graph_code
         echo ""
         update_navigator
@@ -162,7 +183,7 @@ case "$COMPONENT" in
         ;;
     *)
         echo "Unknown component: $COMPONENT"
-        echo "Usage: $0 [prism|planning|aidd|ralph|graph-code|navigator|pilot|all]"
+        echo "Usage: $0 [prism|planning|aidd|ralph|grepai|graph-code|navigator|pilot|all]"
         exit 1
         ;;
 esac
